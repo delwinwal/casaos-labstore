@@ -1,0 +1,212 @@
+name: bobarr
+
+services:
+  bobarr-api:
+    container_name: bobarr-api
+    hostname: bobarr-api
+    image: iam4x/bobarr-api:latest
+    volumes:
+      - /DATA/Media:/usr/library
+      - /DATA/Downloads:/usr/library/downloads
+    command:
+      - yarn
+      - start:prod
+    environment:
+      DEBUG_REDIS: "false"
+      ENV: production
+      JACKETT_AUTOMATIC_SEARCH_TIMEOUT: "120000"
+      JACKETT_MANUAL_SEARCH_TIMEOUT: "15000"
+      LIBRARY_MOVIES_FOLDER_NAME: Movies
+      LIBRARY_TV_SHOWS_FOLDER_NAME: Series
+      POSTGRES_DB: bobarr
+      POSTGRES_PASSWORD: bobarr
+      POSTGRES_USER: bobarr
+      REDIS_PASSWORD: bobarr
+      PGID: $PGID
+      PUID: $PUID
+      TZ: $TZ
+      UMASK_SET: "0002"
+    ports:
+      - '4000:4000'
+    restart: unless-stopped
+    networks:
+      - bobarr
+
+  bobarr-web:
+    command:
+      - yarn
+      - start
+    container_name: bobarr-web
+    hostname: bobarr-web
+    image: iam4x/bobarr-web:latest
+    environment:
+      DEBUG_REDIS: "false"
+      ENV: production
+      JACKETT_AUTOMATIC_SEARCH_TIMEOUT: "120000"
+      JACKETT_MANUAL_SEARCH_TIMEOUT: "15000"
+      LIBRARY_MOVIES_FOLDER_NAME: Movies
+      LIBRARY_TV_SHOWS_FOLDER_NAME: Series
+      POSTGRES_DB: bobarr
+      POSTGRES_PASSWORD: bobarr
+      POSTGRES_USER: bobarr
+      REDIS_PASSWORD: bobarr
+      PGID: $PGID
+      PUID: $PUID
+      TZ: $TZ
+      UMASK_SET: "0002"
+    ports:
+      - '3000:3000'
+    restart: unless-stopped
+    networks:
+      - bobarr
+
+  flaresolverr:
+    container_name: bobarr-flaresolverr
+    hostname: bobarr-flaresolverr
+    image: ghcr.io/flaresolverr/flaresolverr:latest
+    environment:
+      LOG_LEVEL: info
+    ports:
+      - '8191:8191'
+    restart: unless-stopped
+    networks:
+      - bobarr
+
+  jackett:
+    container_name: bobarr-jacket
+    hostname: bobarr-jacket
+    image: linuxserver/jackett:latest
+    volumes:
+      - /DATA/AppData/bobarr/jackett/config:/config
+      - /DATA/Downloads:/downloads
+    environment:
+      DEBUG_REDIS: "false"
+      ENV: production
+      JACKETT_AUTOMATIC_SEARCH_TIMEOUT: "120000"
+      JACKETT_MANUAL_SEARCH_TIMEOUT: "15000"
+      LIBRARY_MOVIES_FOLDER_NAME: Movies
+      LIBRARY_TV_SHOWS_FOLDER_NAME: Series
+      POSTGRES_DB: bobarr
+      POSTGRES_PASSWORD: bobarr
+      POSTGRES_USER: bobarr
+      REDIS_PASSWORD: bobarr
+      PGID: $PGID
+      PUID: $PUID
+      TZ: $TZ
+      UMASK_SET: "0002"
+    ports:
+      - '9117:9117'
+    restart: unless-stopped
+    networks:
+      - bobarr
+
+  postgres:
+    container_name: bobarr-postgresql
+    hostname: bobarr-postgresql
+    image: postgres:12-alpine
+    volumes:
+      - /DATA/AppData/bobarr/postgress/db_data:/var/lib/postgresql/data
+    environment:
+      DEBUG_REDIS: "false"
+      ENV: production
+      JACKETT_AUTOMATIC_SEARCH_TIMEOUT: "120000"
+      JACKETT_MANUAL_SEARCH_TIMEOUT: "15000"
+      LIBRARY_MOVIES_FOLDER_NAME: Movies
+      LIBRARY_TV_SHOWS_FOLDER_NAME: Series
+      POSTGRES_DB: bobarr
+      POSTGRES_PASSWORD: bobarr
+      POSTGRES_USER: bobarr
+      REDIS_PASSWORD: bobarr
+      PGID: $PGID
+      PUID: $PUID
+      TZ: $TZ
+      UMASK_SET: "0002"
+    restart: unless-stopped
+    networks:
+      - bobarr
+
+  redis:
+    container_name: bobarr-redis
+    hostname: bobarr-redis
+    image: bitnami/redis:7.0.15
+    volumes:
+      - /DATA/AppData/bobarr/redis/redis_data:/bitnami/redis/data
+    environment:
+      DEBUG_REDIS: "false"
+      ENV: production
+      JACKETT_AUTOMATIC_SEARCH_TIMEOUT: "120000"
+      JACKETT_MANUAL_SEARCH_TIMEOUT: "15000"
+      LIBRARY_MOVIES_FOLDER_NAME: Movies
+      LIBRARY_TV_SHOWS_FOLDER_NAME: Series
+      POSTGRES_DB: bobarr
+      POSTGRES_PASSWORD: bobarr
+      POSTGRES_USER: bobarr
+      REDIS_PASSWORD: bobarr
+      PGID: $PGID
+      PUID: $PUID
+      TZ: $TZ
+      UMASK_SET: "0002"
+    restart: unless-stopped
+    networks:
+      - bobarr
+
+  transmission:
+    container_name: bobarr-transmission
+    hostname: bobarr-transmission
+    image: linuxserver/transmission:latest
+    volumes:
+      - /DATA/Downloads:/downloads
+      - /DATA/AppData/bobarr/transmission/config:/config
+      - /DATA/AppData/bobarr/transmission/watch:/watch
+    environment:
+      DEBUG_REDIS: "false"
+      ENV: production
+      JACKETT_AUTOMATIC_SEARCH_TIMEOUT: "120000"
+      JACKETT_MANUAL_SEARCH_TIMEOUT: "15000"
+      LIBRARY_MOVIES_FOLDER_NAME: Movies
+      LIBRARY_TV_SHOWS_FOLDER_NAME: Series
+      POSTGRES_DB: bobarr
+      POSTGRES_PASSWORD: bobarr
+      POSTGRES_USER: bobarr
+      REDIS_PASSWORD: bobarr
+      PGID: $PGID
+      PUID: $PUID
+      TZ: $TZ
+      UMASK_SET: "0002"
+    restart: unless-stopped
+    networks:
+      - bobarr
+
+  transmission-web:
+    hostname: bobarr-transmission-web
+    image: dperson/nginx:latest
+    container_name: bobarr-transmission-web
+    depends_on:
+      - transmission
+    command:
+      - -w
+      - http://transmission:9091;/
+    environment:
+      TZ: $TZ
+    ports:
+      - '9091:80'
+    restart: unless-stopped
+    networks:
+      - bobarr
+
+networks:
+  bobarr:
+    name: bobarr
+
+x-casaos:
+  main: bobarr-web
+  author: delwinwal
+  category: Media
+  developer: iam4x
+  store_app_id: bobarr
+  icon: ""
+  title:
+    en_us: Bobarr
+  port_map: "3000"
+  scheme: http
+  index: /
