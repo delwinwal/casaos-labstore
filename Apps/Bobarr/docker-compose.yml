@@ -199,6 +199,9 @@ networks:
     name: bobarr
 
 x-casaos:
+  architectures:
+    - arm64
+    - amd64
   main: bobarr-web
   author: delwinwal
   category: Media
