@@ -57,8 +57,9 @@ x-casaos:
   description:
     en_us: A self-hosted recipe manager and meal planner with a RestAPI backend and a reactive frontend application built in Vue for a pleasant user experience for the whole family.
   developer: LangGenius
-  #icon: 
-  #screenshot_link:
+  icon: https://raw.githubusercontent.com/delwinwal/casaos-labstore/refs/heads/main/Apps/Mealie/icon.png
+  screenshot_link:
+    - https://raw.githubusercontent.com/delwinwal/casaos-labstore/refs/heads/main/Apps/Mealie/screenshot-1.png
   #thumbnail:
   tagline:
     en_us: A Place For All Your Recipes
