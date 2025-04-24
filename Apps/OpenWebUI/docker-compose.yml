@@ -91,7 +91,7 @@ x-casaos:
         **リソース使用の注意事項：**
         デバイスのリソース（CPU/GPU/RAM）の使用に注意して、デバイスのパフォーマンス低下を防ぐようにしてください。
   scheme: http
-  store_app_id: open-webui-ollama
+  store_app_id: open-webui-ollama-fix
   title:
     en_us: Open WebUI
     en_uk: Open WebUI
