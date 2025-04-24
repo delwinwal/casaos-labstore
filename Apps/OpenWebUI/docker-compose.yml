@@ -7,9 +7,7 @@ services:
         reservations:
           memory: "512M"
           devices:
-              - driver: nvidia
-                count: all
-                capabilities:
+              - capabilities:
                     - gpu
     network_mode: bridge
     ports:
